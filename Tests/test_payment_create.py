@@ -1,10 +1,15 @@
 import pytest
 import requests
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-def test_create_payment():
+def test_payment_create():
     base_url = "http://moderntester.pl:8811/api"
     url = f"{base_url}/payment"
+    headers = {'Content-Type': 'application/json'}
 
     payload = {
         "amount": 23,
@@ -14,8 +19,6 @@ def test_create_payment():
         "staffId": 2
     }
 
-    headers = {'Content-Type': 'application/json'}
-
     response = requests.post(url, json=payload, headers=headers)
     assert response.status_code == 201
 
@@ -23,5 +26,6 @@ def test_create_payment():
     assert response.json()["amount"] == 23
     assert "id" in response.json()
 
-    print(
-        f"utworzony nową płatnośc o ID: {response.json()['id']}, dla customera o ID: {response.json()['customerId']} oraz ceną: {response.json()['amount']}")
+    logger.info(
+        f"utworzono nową płatnośc o ID: {response.json()['id']}, dla customera o ID: {response.json()['customerId']} oraz ceną: {response.json()['amount']}"
+    )
