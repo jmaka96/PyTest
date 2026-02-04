@@ -1,11 +1,10 @@
 import pytest
 import requests
+from configuration import base_url, payment_endpoint, headers
 
 
 def test_payment_edit():
-    base_url = "http://moderntester.pl:8811/api"
-    url = f"{base_url}/payment/"
-    headers = {'content-type': 'application/json'}
+    url = f"{base_url}{payment_endpoint}"
 
     update_payload = {
         "amount": 12,

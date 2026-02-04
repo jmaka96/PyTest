@@ -1,15 +1,14 @@
 import pytest
 import requests
 import logging
+from configuration import base_url, payment_endpoint, headers
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 def test_payment_create():
-    base_url = "http://moderntester.pl:8811/api"
-    url = f"{base_url}/payment"
-    headers = {'Content-Type': 'application/json'}
+    url = f"{base_url}{payment_endpoint}"
 
     payload = {
         "amount": 23,
