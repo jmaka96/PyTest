@@ -2,9 +2,10 @@ import pytest
 import requests
 
 
-def test_edit_payment():
+def test_payment_edit():
     base_url = "http://moderntester.pl:8811/api"
     url = f"{base_url}/payment/"
+    headers = {'content-type': 'application/json'}
 
     update_payload = {
         "amount": 12,
@@ -14,8 +15,6 @@ def test_edit_payment():
         "rentalId": 40,
         "staffId": 3
     }
-
-    headers = {'content-type': 'application/json'}
 
     response = requests.put(url, json=update_payload, headers=headers)
 

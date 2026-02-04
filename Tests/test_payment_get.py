@@ -2,7 +2,7 @@ import pytest
 import requests
 
 
-def test_get_all_payments():
+def test_payment_get():
     base_url = "http://moderntester.pl:8811/api"
     url = f"{base_url}/payment"
 
