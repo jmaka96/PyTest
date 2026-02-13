@@ -1,21 +1,20 @@
 import pytest
 import requests
-from configuration import base_url, payment_endpoint, headers
 
 
-def test_payment_edit():
-    url = f"{base_url}{payment_endpoint}"
+def test_payment_edit(payment_url, auth_headers, create_payment):
+    payment_id, _ = create_payment
 
     update_payload = {
         "amount": 12,
         "customerId": 2,
-        "id": 16434,
+        "id": payment_id,
         "paymentDate": "2026-01-26T11:53:06.277Z",
         "rentalId": 40,
         "staffId": 3
     }
 
-    response = requests.put(url, json=update_payload, headers=headers)
+    response = requests.put(payment_url, json=update_payload, headers=auth_headers)
 
     assert response.status_code == 200
     assert response.json()["amount"] == 12

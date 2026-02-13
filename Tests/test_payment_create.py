@@ -1,15 +1,12 @@
 import pytest
 import requests
 import logging
-from configuration import base_url, payment_endpoint, headers
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def test_payment_create():
-    url = f"{base_url}{payment_endpoint}"
-
+def test_payment_create(payment_url, auth_headers):
     payload = {
         "amount": 23,
         "customerId": 1,
@@ -18,7 +15,7 @@ def test_payment_create():
         "staffId": 2
     }
 
-    response = requests.post(url, json=payload, headers=headers)
+    response = requests.post(payment_url, json=payload, headers=auth_headers)
     assert response.status_code == 201
 
     assert response.json()["customerId"] == 1
@@ -26,5 +23,5 @@ def test_payment_create():
     assert "id" in response.json()
 
     logger.info(
-        f"utworzono nową płatnośc o ID: {response.json()['id']}, dla customera o ID: {response.json()['customerId']} oraz ceną: {response.json()['amount']}"
+        f"Created new payment with ID: {response.json()['id']}, for Customer ID: {response.json()['customerId']} and price: {response.json()['amount']}"
     )
