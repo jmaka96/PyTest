@@ -8,22 +8,14 @@ logger = logging.getLogger(__name__)
 payment_url = f"{base_url}{payment_endpoint}"
 payment_id = 0
 
-payload = {
-    "amount": 23,
-    "customerId": 1,
-    "paymentDate": "2026-01-26T11:53:06.277Z",
-    "rentalId": 40,
-    "staffId": 2
-}
 
-
-def test_create_payment():
+def test_create_payment(payment_payload):
     global payment_id
-    response = requests.post(payment_url, json=payload, headers=headers)
+    response = requests.post(payment_url, json=payment_payload, headers=headers)
 
     assert response.status_code == 201
-    assert response.json()["customerId"] == payload["customerId"]
-    assert response.json()["amount"] == payload["amount"]
+    assert response.json()["customerId"] == payment_payload["customerId"]
+    assert response.json()["amount"] == payment_payload["amount"]
     assert "id" in response.json()
 
     payment_id = response.json()["id"]
@@ -41,15 +33,14 @@ def test_get_payments():
     logger.info("GET returned status code 200 successfully")
 
 
-def test_edit_payment():
+def test_edit_payment(payment_payload):
     assert payment_id is not 0, "Payment ID is not set - test_create_payment failed"
 
     update_payload = {
+        **payment_payload,
+        "id": payment_id,
         "amount": 12,
         "customerId": 2,
-        "id": payment_id,
-        "paymentDate": "2026-01-26T11:53:06.277Z",
-        "rentalId": 40,
         "staffId": 3
     }
 
