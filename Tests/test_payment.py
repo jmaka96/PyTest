@@ -1,6 +1,8 @@
 import requests
 import logging
+import pytest
 from configuration import base_url, payment_endpoint, headers
+from conftest import PAYMENT_PAYLOADS_PARAMS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -60,3 +62,41 @@ def test_delete_payment():
 
     assert response.status_code == 204
     logger.info(f"Deleted payment with ID: {payment_id}")
+
+
+@pytest.mark.parametrize("payload", PAYMENT_PAYLOADS_PARAMS)
+def test_create_payment_parametrized(payload):
+    response = requests.post(payment_url, json=payload, headers=headers)
+
+    assert response.status_code == 201
+    assert response.json()["customerId"] == payload["customerId"]
+    assert response.json()["amount"] == payload["amount"]
+    assert "id" in response.json()
+    logger.info(
+        f"Created payment with ID: {response.json()['id']} "
+        f"Customer ID: {response.json()['customerId']} "
+        f"Amount: {response.json()['amount']}"
+    )
+
+
+@pytest.mark.parametrize("payload", PAYMENT_PAYLOADS_PARAMS)
+def test_edit_payment_parametrized(payload):
+    create_response = requests.post(payment_url, json=payload, headers=headers)
+    assert create_response.status_code == 201
+    created_id = create_response.json()["id"]
+
+    update_payload = {
+        **payload,
+        "id": created_id,
+        "amount": 12,
+        "customerId": 2,
+        "staffId": 3
+    }
+
+    response = requests.put(payment_url, json=update_payload, headers=headers)
+
+    assert response.status_code == 200
+    assert response.json()["amount"] == 12
+    assert response.json()["customerId"] == 2
+    assert response.json()["staffId"] == 3
+    logger.info(f"Updated payment with ID: {created_id}")
